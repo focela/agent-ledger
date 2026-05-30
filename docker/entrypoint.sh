@@ -89,8 +89,7 @@ chown "$run_as" "$iii_config"
 
 if [ ! -s "$hmac_file" ]; then
   secret="${AGENT_LEDGER_SECRET:-$(openssl rand -hex 32)}"
-  umask 077
-  printf '%s\n' "$secret" > "$hmac_file"
+  ( umask 077; printf '%s\n' "$secret" > "$hmac_file" )
   chmod 600 "$hmac_file"
   chown "$run_as" "$hmac_file"
   echo "[agent-ledger] HMAC secret initialized at $hmac_file (chmod 600)."
