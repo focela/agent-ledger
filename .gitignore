@@ -1,0 +1,45 @@
+# OS
+.DS_Store
+Thumbs.db
+*~
+
+# Editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+
+# Secrets and local env
+.env
+.env.*
+!.env.server.example
+*.crt
+*.key
+*.p12
+*.pem
+*.pfx
+.cursor/mcp.json
+.mcp.json
+.npmrc
+secrets/
+
+# Dependencies
+node_modules/
+
+# Runtime data
+*.log
+logs/*
+!logs/.gitkeep
+data/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Infrastructure
+.terraform/
+*.tfstate
+*.tfstate.*
