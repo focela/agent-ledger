@@ -70,6 +70,6 @@ nohup bash -c "
     while [ \"\$(date '+%Y-%m-%d')\" = \"\$TODAY\" ]; do sleep 30; done
     kill \"\$INNER\" 2>/dev/null || true
   done
-" &
+" >/dev/null 2>&1 &
 echo $! > "$PID_FILE"
 info "Log file: $LOG_DIR/agent-ledger-$(date '+%Y-%m-%d').log"
