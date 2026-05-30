@@ -21,3 +21,15 @@ read_agent_ledger_secret() {
     sh -c 'cat "${AGENT_LEDGER_HMAC_FILE:-/data/.hmac}"' 2>/dev/null \
     | tr -d '\n\r' || true
 }
+
+# Stop the background log watcher recorded in logs/.log.pid, if running.
+stop_log_watcher() {
+  pid_file="$ROOT/logs/.log.pid"
+  [ -f "$pid_file" ] || return 0
+  old_pid="$(cat "$pid_file")"
+  if ps -p "$old_pid" -o args= 2>/dev/null | grep -qF "$ROOT/logs"; then
+    pkill -P "$old_pid" 2>/dev/null || true
+    kill "$old_pid" 2>/dev/null || true
+  fi
+  rm -f "$pid_file"
+}

@@ -49,14 +49,7 @@ mkdir -p "$LOG_DIR"
 find "$LOG_DIR" -name 'agent-ledger-*.log' -mtime +14 -delete 2>/dev/null || true
 
 # Stop previous log watcher if still running.
-if [ -f "$PID_FILE" ]; then
-  OLD_PID="$(cat "$PID_FILE")"
-  if ps -p "$OLD_PID" -o args= 2>/dev/null | grep -qF "$LOG_DIR"; then
-    pkill -P "$OLD_PID" 2>/dev/null || true
-    kill "$OLD_PID" 2>/dev/null || true
-  fi
-  rm -f "$PID_FILE"
-fi
+stop_log_watcher
 
 # Restart docker logs at midnight so each day has its own file.
 nohup bash -c "
