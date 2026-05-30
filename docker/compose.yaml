@@ -1,0 +1,54 @@
+name: agent-ledger
+
+services:
+  agent-ledger:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - npm_token
+    restart: unless-stopped
+    # Bind to loopback; expose remotely via a reverse proxy, not by widening this.
+    ports:
+      - "127.0.0.1:3111:3111"
+      - "127.0.0.1:3113:13113"
+    volumes:
+      - ${AGENT_LEDGER_DATA_DIR:-../data}:/data
+    # Optional; required:false needs Compose 2.24+.
+    env_file:
+      - path: .env.server
+        required: false
+    environment:
+      AGENT_LEDGER_DATA_DIR: /data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:3111/agent-ledger/livez || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Viewer listens on loopback 3113 (package default); socat bridges it to the host.
+  viewer-proxy:
+    image: alpine/socat:1.8.0.3@sha256:72f4cbffbbd50ecf3d3f6f0a6104e619030fd89e8264346f53fe01080341c099
+    network_mode: "service:agent-ledger"
+    depends_on:
+      agent-ledger:
+        condition: service_healthy
+    restart: unless-stopped
+    command: ["TCP-LISTEN:13113,fork,reuseaddr,bind=0.0.0.0", "TCP:127.0.0.1:3113"]
+    healthcheck:
+      test: ["CMD-SHELL", "socat /dev/null TCP:127.0.0.1:13113 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+# Reads NPM_TOKEN from the host environment; leave unset for public packages.
+secrets:
+  npm_token:
+    environment: NPM_TOKEN
