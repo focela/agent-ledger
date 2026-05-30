@@ -92,7 +92,7 @@ If QA finds a bug, apply the fix on `<type>/AGL-N`. Then create
 Before opening a pull request:
 
 1. Rebase onto the latest target branch (`main` or `develop`).
-2. Run any local checks defined in the project `Makefile`, if present.
+2. Run local checks with `make verify` when the target is available.
 3. If deployment files changed, verify the service starts.
 4. Update documentation for user-facing changes.
 
