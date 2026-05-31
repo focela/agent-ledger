@@ -1,0 +1,3 @@
+# Build context is docker/. Keep only what the Dockerfile copies.
+*
+!entrypoint.sh
