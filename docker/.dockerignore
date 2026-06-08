@@ -1,0 +1,4 @@
+# Exclude everything from the build context, then allow only what the image
+# needs. This keeps local environment files and secrets out of the build.
+*
+!entrypoint.sh
